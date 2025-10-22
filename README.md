@@ -243,12 +243,6 @@ POST   /admin/policies/initialize     - Initialize default policies
 
 ## Testing the System
 
-### Sample PNR Numbers
-- `ABC123` - JFK to LAX flight
-- `DEF456` - BOS to SFO flight
-- `GHI789` - ORD to MIA flight
-- `JKL012` - SEA to JFK flight
-
 ### Sample Queries
 
 Try these queries in the customer interface:
@@ -299,29 +293,3 @@ Use the Admin Panel to:
 3. Define tasks with execution order
 4. Specify task types and parameters
 5. Save to make immediately available
-
-## Performance Optimization
-
-For production-scale deployments:
-
-- Add Redis caching for policies and frequently accessed data
-- Implement message queue (RabbitMQ/Kafka) for async tasks
-- Use database read replicas for scaling reads
-- Enable CDN for static frontend assets
-- Configure database connection pooling limits
-- Implement response compression
-- Add database query optimization and indexing
-
-## Future Enhancements
-
-- Multi-language support for international customers
-- Voice interface integration
-- Advanced analytics and reporting dashboard
-- A/B testing framework for intent classification
-- Webhook support for external system integration
-- Real-time notifications via WebSockets
-- Mobile application (React Native)
-- Integration with actual airline reservation systems
-- Improve and implement the complete admin enpoint to configure the request flows
-- Rate Limiting
-- User session handling and proper history management
