@@ -1,286 +1,327 @@
 # Airline Customer Support System
 
-An AI-powered customer support system for airlines built with FastAPI, PostgreSQL, React, and Google Gemini AI.
+An AI-powered customer support system for airlines that provides intelligent task orchestration and natural language understanding to handle customer queries efficiently.
 
-## 🎯 Problem Statement
+## Problem Statement
 
-This system provides a tooling backend to support airline customer service bot(s). It handles various customer request types through a task orchestration system, including:
+Modern airline customer service faces challenges in handling diverse customer requests efficiently while maintaining high service quality. This system addresses these challenges by providing:
 
-- **Cancel Trip**: Complete flight cancellation workflow with refund processing
-- **Cancellation Policy**: Policy information retrieval
-- **Flight Status**: Real-time flight status checking
-- **Seat Availability**: View and select available seats
-- **Pet Travel**: Pet travel policy information
+- **Automated Intent Recognition**: Understanding what customers want from natural language queries
+- **Dynamic Task Orchestration**: Multi-step workflow execution for complex operations
+- **Policy Management**: Centralized storage and retrieval of airline policies
+- **Scalable Architecture**: Support for multiple airlines with configurable workflows
 
-## 🏗️ Architecture
+The system serves as a tooling backend that supports airline customer service bots, handling various request types through intelligent task orchestration and seamless API integration.
 
-### Backend (FastAPI)
-- **Intent Classification**: Google Gemini AI for understanding customer queries
-- **Task Orchestration**: Dynamic workflow execution based on request types
-- **Airline API**: RESTful endpoints for flight operations
-- **Policy Management**: Store and retrieve airline policies
-- **Database**: PostgreSQL with SQLAlchemy ORM
+## Features
 
-### Frontend (React)
-- **Customer Interface**: Chat-based support interface
-- **Admin Panel**: Visual configuration tool for request types and policies
+### Core Capabilities
 
-## 📋 Features
+#### 1. Intent Classification & Natural Language Understanding
+- Multi-intent detection using Google Gemini AI
+- Context-aware conversation management
+- Entity extraction (PNR, dates, flight numbers)
+- Fallback keyword-based classification
 
-### Functional Requirements ✅
+#### 2. Request Type Workflows
 
-1. **Customer Message Processing**
-   - Natural language understanding using Google Gemini
-   - Multi-intent detection
-   - Context-aware conversations
+**Cancel Trip**
+- Booking retrieval and validation
+- Confirmation workflow
+- Dynamic cancellation fee calculation based on departure date
+- Automated refund processing
 
-2. **Request Types & Tasks**
-   - ✅ Cancel Trip (5 tasks)
-   - ✅ Cancellation Policy (2 tasks)
-   - ✅ Flight Status (3 tasks)
-   - ✅ Seat Availability (4 tasks)
-   - ✅ Pet Travel (2 tasks)
+**Flight Status**
+- Real-time flight status checking
+- Departure and arrival time updates
+- Seat assignment information
 
-3. **Airline API Endpoints**
-   - ✅ GET `/flight/booking` - Get booking details by PNR
-   - ✅ POST `/flight/cancel` - Cancel flight booking
-   - ✅ POST `/flight/available_seats` - Get seat availability
-   - ✅ GET `/flight/status` - Get flight status
+**Seat Availability**
+- Search by PNR or flight route
+- Seat class filtering (Economy, Business)
+- Real-time availability with pricing
+- Current seat assignment tracking
 
-4. **Policy Management**
-   - Cancellation policy
-   - Pet travel policy
-   - Baggage policy
-   - Web scraping capability for policy updates
+**Policy Information**
+- Cancellation policy
+- Pet travel policy
+- Baggage policy
 
-5. **Multi-tenancy Support**
-   - Configurable request types
-   - Customizable task definitions
-   - Policy management per airline
+#### 3. Airline API
 
-6. **Visual Configuration Tool**
-   - Admin panel for managing request types
-   - Task editor with drag-and-drop
-   - Policy document management
+RESTful endpoints for core operations:
+- `GET /flight/booking` - Retrieve booking details by PNR
+- `POST /flight/cancel` - Cancel flight with dynamic fee calculation
+- `POST /flight/available_seats` - Get seat availability and pricing
+- `GET /flight/status` - Get real-time flight status
 
-### Non-Functional Requirements ✅
+### Technical Features
 
-- **Low Latency**: Async processing, optimized queries
-- **Scalability**: Stateless architecture, session management
-- **Maintainability**: Modular design, clear separation of concerns
+- **Stateless Architecture**: Horizontal scaling ready
+- **Async Operations**: Non-blocking I/O for better performance
+- **Database Connection Pooling**: Efficient resource utilization
+- **Input Validation**: Pydantic schemas on all endpoints
+- **Automatic API Documentation**: Swagger UI and ReDoc
+- **CORS Support**: Frontend integration ready
 
-## 🚀 Getting Started
+## Technology Stack
+
+### Backend
+- **FastAPI** - Modern Python web framework with automatic API documentation
+- **SQLAlchemy** - ORM for database operations
+- **PostgreSQL** - Relational database
+- **Google Gemini AI** - Intent classification and natural language understanding
+- **Pydantic** - Data validation and serialization
+- **BeautifulSoup4** - Web scraping for policy documents
+
+### Frontend
+- **React 18** - Modern UI library with hooks
+- **Vite** - Fast build tool and development server
+- **Axios** - HTTP client for API communication
+- **React Router** - Client-side routing
+
+## Installation & Setup
 
 ### Prerequisites
 
-- Python 3.9+
-- Node.js 18+
-- PostgreSQL 13+
+- Python 3.9 or higher
+- Node.js 18 or higher
+- PostgreSQL 13 or higher
 - Google API Key (for Gemini AI)
 
-### Backend Setup
+### Step 1: Clone the Repository
 
-1. **Navigate to backend directory**
+```bash
+git clone https://github.com/THARAGESHWARAN-SATHYAMOORTHY/ASAPP-Hackathon.git
+cd ASAPP-Hackathon
+```
+
+### Step 2: Backend Setup
+
+#### 2.1 Navigate to Backend Directory
 ```bash
 cd backend
 ```
 
-2. **Create virtual environment**
+#### 2.2 Create Virtual Environment
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# On macOS/Linux
+source venv/bin/activate
+
+# On Windows
+venv\Scripts\activate
 ```
 
-3. **Install dependencies**
+#### 2.3 Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Configure environment variables**
-```bash
-cp .env.example .env
-```
+#### 2.4 Configure Environment Variables
 
-Edit `.env` and add:
+Create a `.env` file in the `backend` directory:
+
 ```env
-DATABASE_URL=postgresql://postgres:1234@localhost:5432/airline_support
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/airline_support
 GOOGLE_API_KEY=your_google_api_key_here
 SECRET_KEY=your_secret_key_here
 ```
 
-5. **Create database**
+To obtain a Google API Key:
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Create a new API key
+3. Copy and paste it into your `.env` file
+
+#### 2.5 Create Database
+
 ```bash
+# Using PostgreSQL command line
 createdb airline_support
+
+# Or using psql
+psql -U postgres
+CREATE DATABASE airline_support;
+\q
 ```
 
-6. **Seed database**
+#### 2.6 Seed Database with Sample Data
+
 ```bash
 python seed_data.py
 ```
 
-7. **Run the server**
+This will create:
+- 4 sample flights
+- 4 sample bookings with PNRs (ABC123, DEF456, GHI789, JKL012)
+- 540+ seats across all flights
+- 5 pre-configured request types
+- 3 default policies
+
+#### 2.7 Start Backend Server
+
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API will be available at: http://localhost:8000
-API docs: http://localhost:8000/docs
+Backend will be available at:
+- API: http://localhost:8000
+- Documentation: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-### Frontend Setup
+### Step 3: Frontend Setup
 
-1. **Navigate to frontend directory**
+#### 3.1 Navigate to Frontend Directory
+
 ```bash
+# In a new terminal window
 cd frontend
 ```
 
-2. **Install dependencies**
+#### 3.2 Install Dependencies
+
 ```bash
 npm install
 ```
 
-3. **Run development server**
+#### 3.3 Start Development Server
+
 ```bash
 npm run dev
 ```
 
-Frontend will be available at: http://localhost:3000
+Frontend will be available at: http://localhost:5173
 
-## 📊 Database Schema
+### Step 4: Verify Installation
 
-### Core Tables
+1. Open http://localhost:5173 in your browser
+2. Click on "Customer Support" to access the chat interface
+3. Try a sample query: "I want to cancel my flight"
+4. When prompted, use PNR: `ABC123`
 
-- **flight_details**: Flight information
-- **booking_details**: Customer bookings
-- **seat_details**: Seat inventory and availability
-- **policy_documents**: Airline policies
-- **request_types**: Configurable request types
-- **task_definitions**: Task configurations
-- **conversation_sessions**: Customer conversations
-- **conversation_messages**: Chat history
+## Database Schema
 
-## 🔧 API Endpoints
+The system uses 8 core tables:
+
+- **flight_details** - Flight schedules and status information
+- **booking_details** - Customer bookings with PNR tracking
+- **seat_details** - Seat inventory and availability
+- **policy_documents** - Airline policies and documentation
+- **request_types** - Configurable workflow definitions
+- **task_definitions** - Individual task configurations
+- **conversation_sessions** - Customer conversation tracking
+- **conversation_messages** - Complete message history
+
+## API Endpoints
 
 ### Airline API (`/flight`)
-
-- `GET /flight/booking?pnr={pnr}` - Get booking details
-- `POST /flight/cancel` - Cancel flight
-- `POST /flight/available_seats` - Get available seats
-- `GET /flight/status?pnr={pnr}` - Get flight status
+```
+GET    /flight/booking?pnr={pnr}     - Get booking details
+POST   /flight/cancel                 - Cancel flight
+POST   /flight/available_seats        - Get seat availability
+GET    /flight/status?pnr={pnr}       - Get flight status
+```
 
 ### Customer API (`/customer`)
-
-- `POST /customer/query` - Submit customer query
-- `POST /customer/input` - Provide additional input
-- `GET /customer/session/{session_id}` - Get session history
+```
+POST   /customer/query                - Submit customer query
+POST   /customer/input                - Provide additional input
+GET    /customer/session/{session_id} - Get conversation history
+```
 
 ### Admin API (`/admin`)
+```
+GET    /admin/request-types           - List all request types
+POST   /admin/request-types           - Create request type
+PUT    /admin/request-types/{id}      - Update request type
+DELETE /admin/request-types/{id}      - Deactivate request type
+GET    /admin/policies                - List policies
+POST   /admin/policies                - Create/update policy
+POST   /admin/policies/initialize     - Initialize default policies
+```
 
-- `GET /admin/request-types` - List all request types
-- `POST /admin/request-types` - Create request type
-- `PUT /admin/request-types/{id}` - Update request type
-- `DELETE /admin/request-types/{id}` - Deactivate request type
-- `GET /admin/policies` - List policies
-- `POST /admin/policies` - Create/update policy
-- `POST /admin/policies/initialize` - Initialize default policies
+## Testing the System
 
-## 🧪 Testing
-
-### Sample PNR Numbers (from seed data)
-
-- `ABC123` - JFK to LAX
-- `DEF456` - BOS to SFO
-- `GHI789` - ORD to MIA
-- `JKL012` - SEA to JFK
+### Sample PNR Numbers
+- `ABC123` - JFK to LAX flight
+- `DEF456` - BOS to SFO flight
+- `GHI789` - ORD to MIA flight
+- `JKL012` - SEA to JFK flight
 
 ### Sample Queries
 
-- "I want to cancel my flight" (PNR: ABC123)
-- "What is my flight status?" (PNR: DEF456)
-- "Show me available seats" (PNR: GHI789)
-- "Can I bring my pet on the flight?"
-- "What is your cancellation policy?"
+Try these queries in the customer interface:
 
-## 🎨 UI Features
+1. **Cancel Trip**: "I want to cancel my flight" → Provide PNR: ABC123
+2. **Flight Status**: "What is my flight status?" → Provide PNR: DEF456
+3. **Seat Availability**: "Show me available seats" → Provide PNR: GHI789 or route: "JFK to LAX"
+4. **Policy Information**: "Can I bring my pet on the flight?"
+5. **Cancellation Policy**: "What is your cancellation policy?"
 
-### Customer Interface
+## Architecture Overview
 
-- Modern chat interface with typing indicators
-- Quick action buttons for common queries
-- Sample PNR display for testing
-- Real-time message updates
-- Session persistence
+```
+┌─────────────┐
+│   React UI  │ (Customer Interface & Admin Panel)
+└──────┬──────┘
+       │ HTTP/REST
+┌──────▼──────────────────────────────┐
+│         FastAPI Backend             │
+│  ┌────────────────────────────────┐ │
+│  │     API Routers                │ │
+│  │  (Customer, Airline, Admin)    │ │
+│  └───────────┬────────────────────┘ │
+│  ┌───────────▼────────────────────┐ │
+│  │     Service Layer              │ │
+│  │  - Task Orchestrator           │ │
+│  │  - Intent Classifier (Gemini)  │ │
+│  │  - Airline Service             │ │
+│  │  - Policy Service              │ │
+│  └───────────┬────────────────────┘ │
+│  ┌───────────▼────────────────────┐ │
+│  │   Data Layer (SQLAlchemy)      │ │
+│  └───────────┬────────────────────┘ │
+└──────────────┼──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│      PostgreSQL Database            │
+└─────────────────────────────────────┘
+```
 
-### Admin Panel
+## Configuration & Customization
 
-- Request type configuration
-- Visual task editor
-- Policy document management
-- Real-time updates
-- Responsive design
+### Adding New Request Types
 
-## 🔐 Security Considerations
+Use the Admin Panel to:
+1. Navigate to the "Request Types" tab
+2. Click "Add Request Type"
+3. Define tasks with execution order
+4. Specify task types and parameters
+5. Save to make immediately available
 
-- Input validation on all endpoints
-- SQL injection prevention via ORM
-- Environment variable configuration
-- CORS configuration for frontend
-- Session management
+## Performance Optimization
 
-## 📈 Scalability
+For production-scale deployments:
 
-- Stateless API design
-- Database connection pooling
-- Async operations where applicable
-- Modular architecture for horizontal scaling
-- Configurable task system for easy extension
+- Add Redis caching for policies and frequently accessed data
+- Implement message queue (RabbitMQ/Kafka) for async tasks
+- Use database read replicas for scaling reads
+- Enable CDN for static frontend assets
+- Configure database connection pooling limits
+- Implement response compression
+- Add database query optimization and indexing
 
-## 🛠️ Technology Stack
+## Future Enhancements
 
-**Backend:**
-- FastAPI - Modern Python web framework
-- SQLAlchemy - ORM for database operations
-- PostgreSQL - Relational database
-- Google Gemini AI - Intent classification & NLU
-- Pydantic - Data validation
-
-**Frontend:**
-- React 18 - UI library
-- Vite - Build tool
-- Axios - HTTP client
-- CSS3 - Styling
-
-## 📝 Future Enhancements
-
-- [ ] Multi-language support
-- [ ] Voice input/output
-- [ ] Advanced analytics dashboard
-- [ ] A/B testing for intent classification
-- [ ] Webhook support for external integrations
-- [ ] Real-time notifications
-- [ ] Mobile app
-- [ ] Integration with actual airline APIs
-
-## 🤝 Contributing
-
-This is a hackathon project. For production use, consider:
-
-- Adding authentication & authorization
-- Implementing rate limiting
-- Adding comprehensive test coverage
-- Setting up CI/CD pipeline
-- Implementing logging & monitoring
-- Adding caching layer (Redis)
-- Setting up message queue for async tasks
-
-## 📄 License
-
-MIT License - feel free to use for your projects!
-
-## 👥 Team
-
-Built for ASAPP Hackathon 2025
-
----
-
-**Note**: This is a proof-of-concept system. For production deployment, additional security, testing, and infrastructure considerations are required.
-
+- Multi-language support for international customers
+- Voice interface integration
+- Advanced analytics and reporting dashboard
+- A/B testing framework for intent classification
+- Webhook support for external system integration
+- Real-time notifications via WebSockets
+- Mobile application (React Native)
+- Integration with actual airline reservation systems
+- Improve and implement the complete admin enpoint to configure the request flows
+- Rate Limiting
+- User session handling and proper history management
