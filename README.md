@@ -293,3 +293,10 @@ Use the Admin Panel to:
 3. Define tasks with execution order
 4. Specify task types and parameters
 5. Save to make immediately available
+
+## DEMO
+
+https://github.com/user-attachments/assets/6a9bfd35-bf9a-494b-b885-e9faae41c28b
+
+
+
