@@ -24,6 +24,99 @@ class IntentClassifier:
     def __init__(self):
         self.model = genai.GenerativeModel("gemini-2.0-flash")
 
+    def is_airline_related(self, query: str) -> bool:
+        """
+        Check if the query is related to airline operations and services
+        
+        Args:
+            query: Customer query string
+            
+        Returns:
+            Boolean indicating if query is within airline scope
+        """
+        prompt = f"""
+        You are a scope validator for an airline customer support system.
+        
+        Determine if the following query is related to airline operations, services, or customer support.
+        
+        AIRLINE-RELATED topics include:
+        - Flight bookings, cancellations, modifications
+        - Flight status, delays, schedules
+        - Baggage policies, fees, allowances
+        - Seat selection and availability
+        - Pet travel and animal policies
+        - Check-in procedures
+        - Airport information related to flights
+        - Ticket pricing and refunds
+        - Loyalty programs and miles
+        - Special assistance and accessibility
+        - In-flight services
+        - Travel policies and regulations
+        - General airline customer service
+        
+        NOT AIRLINE-RELATED topics include:
+        - General knowledge questions (math, science, history, etc.)
+        - Programming or technical help
+        - Personal advice unrelated to travel
+        - Other industries (hotels, rental cars unless part of airline package)
+        - Entertainment, recipes, jokes
+        - Medical advice
+        - Legal advice
+        - Any topic completely unrelated to air travel
+        
+        Customer query: "{query}"
+        
+        Respond with ONLY "YES" if the query is airline-related, or "NO" if it's not.
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            result = response.text.strip().upper()
+            
+            # If LLM response is unclear, use keyword-based fallback
+            if "YES" in result:
+                return True
+            elif "NO" in result:
+                return False
+            else:
+                # Fallback to keyword-based validation
+                return self._keyword_based_scope_validation(query)
+                
+        except Exception as e:
+            print(f"Error in scope validation: {e}")
+            # Use keyword-based validation as fallback
+            return self._keyword_based_scope_validation(query)
+    
+    def _keyword_based_scope_validation(self, query: str) -> bool:
+        """Keyword-based scope validation as fallback"""
+        query_lower = query.lower()
+        
+        # Common airline-related keywords
+        airline_keywords = [
+            "flight", "book", "cancel", "refund", "seat", "baggage", "luggage",
+            "check-in", "airport", "ticket", "pnr", "reservation", "departure",
+            "arrival", "delay", "status", "pet", "travel", "airline", "plane",
+            "boarding", "gate", "terminal", "passenger", "fare", "price",
+            "miles", "points", "upgrade", "change", "modify", "schedule"
+        ]
+        
+        # If query contains any airline keyword, consider it valid
+        if any(keyword in query_lower for keyword in airline_keywords):
+            return True
+        
+        # Also check if it's a short conversational response (likely part of ongoing conversation)
+        short_responses = [
+            "yes", "no", "ok", "thanks", "thank you", "bye", "hello", "hi",
+            "sure", "please", "help", "nope", "yeah", "yep", "nah"
+        ]
+        
+        # If it's a very short response, allow it (might be part of a conversation flow)
+        if len(query.split()) <= 3 and any(word in query_lower for word in short_responses):
+            return True
+            
+        # Otherwise, it's likely out of scope
+        return False
+
     def classify_intent(self, query: str, instructions: str = "") -> List[str]:
         """
         Classify customer query into one or more intents

@@ -42,6 +42,43 @@ class TaskOrchestrator:
         else:
             session = None
 
+        # For new sessions, validate scope before creating session
+        if not session:
+            # Check if query is airline-related
+            if not self.classifier.is_airline_related(query):
+                # Create a temporary session for out-of-scope query
+                temp_session_id = str(uuid.uuid4())
+                return {
+                    "session_id": temp_session_id,
+                    "response": "I apologize, but I can only assist with airline-related questions and services such as flight bookings, cancellations, baggage policies, seat availability, pet travel, and other airline operations. Please ask me something related to our airline services, and I'll be happy to help!",
+                    "needs_input": False,
+                }
+        
+        # For existing sessions, validate scope if the previous conversation is completed
+        if session:
+            current_state = session.current_state or {"step": 0}
+            current_step = current_state.get("step", 0)
+            
+            # If the session is completed/failed and this is a new query, check scope
+            if current_step == -1 or session.status in ["completed", "failed"]:
+                # Skip scope validation for very short conversational responses
+                query_lower = query.lower().strip()
+                simple_responses = [
+                    "no", "nope", "nah", "yes", "yeah", "yep", "ok", "okay",
+                    "thanks", "thank you", "bye", "goodbye", "nothing", "no thanks"
+                ]
+                
+                # Only validate scope if it's not a simple response
+                if query_lower not in simple_responses and len(query.split()) > 2:
+                    if not self.classifier.is_airline_related(query):
+                        session.status = "completed"
+                        self.db.commit()
+                        return {
+                            "session_id": session.session_id,
+                            "response": "I apologize, but I can only assist with airline-related questions and services such as flight bookings, cancellations, baggage policies, seat availability, pet travel, and other airline operations. Please ask me something related to our airline services, and I'll be happy to help!",
+                            "needs_input": False,
+                        }
+
         if not session:
             # Create new session
             session_id = str(uuid.uuid4())
@@ -810,12 +847,17 @@ For more information, visit: https://www.airline.com/baggage"""
             word in query_lower for word in ["bye", "goodbye", "see you", "later"]
         ):
             response = "Goodbye! Have a great day and safe travels! ✈️"
-        # Handle general inquiries
+        # Handle general inquiries - validate scope first
         else:
-            response = self.classifier.generate_response(
-                context="You are helping a customer with their airline inquiry.",
-                query=query,
-            )
+            # For longer queries, validate if they're airline-related
+            if len(query.split()) > 2 and not self.classifier.is_airline_related(query):
+                response = "I apologize, but I can only assist with airline-related questions and services such as flight bookings, cancellations, baggage policies, seat availability, pet travel, and other airline operations. Please ask me something related to our airline services, and I'll be happy to help!"
+            else:
+                # Generate response for airline-related general inquiries
+                response = self.classifier.generate_response(
+                    context="You are helping a customer with their airline inquiry. Only answer questions related to airline services, flight operations, travel policies, and customer service. If the question is not related to airlines, politely decline and redirect to airline-related topics.",
+                    query=query,
+                )
 
         session.status = "completed"
 

@@ -22,6 +22,7 @@ The system serves as a tooling backend that supports airline customer service bo
 - Context-aware conversation management
 - Entity extraction (PNR, dates, flight numbers)
 - Fallback keyword-based classification
+- **Scope validation** - Ensures only airline-related questions are answered
 
 #### 2. Request Type Workflows
 
@@ -243,6 +244,12 @@ POST   /admin/policies/initialize     - Initialize default policies
 
 ## Testing the System
 
+### Sample PNR Numbers
+- `ABC123` - JFK to LAX flight
+- `DEF456` - BOS to SFO flight
+- `GHI789` - ORD to MIA flight
+- `JKL012` - SEA to JFK flight
+
 ### Sample Queries
 
 Try these queries in the customer interface:
@@ -285,6 +292,16 @@ Try these queries in the customer interface:
 
 ## Configuration & Customization
 
+### Scope Validation
+
+The system includes intelligent scope validation to ensure only airline-related queries are processed. This prevents the system from answering off-topic questions like math problems, recipes, or general knowledge queries.
+
+**Key Features:**
+- AI-powered validation using Google Gemini
+- Keyword-based fallback for reliability
+- Allows natural conversational flow (yes/no/thanks)
+- Polite rejection of out-of-scope questions
+
 ### Adding New Request Types
 
 Use the Admin Panel to:
@@ -297,6 +314,4 @@ Use the Admin Panel to:
 ## DEMO
 
 https://github.com/user-attachments/assets/6a9bfd35-bf9a-494b-b885-e9faae41c28b
-
-
 
